@@ -17,10 +17,10 @@ const checkDomainAvailability = async (domain)=> {
 }
 
 // Example usage
-(async () => {
-    const domain = 'facebook.com';
-    const isAvailable = await checkDomainAvailability(domain);
-    console.log(`${domain} is ${isAvailable ? 'available' : 'not available'}`);
-})();
+// (async () => {
+//     const domain = 'facebook.com';
+//     const isAvailable = await checkDomainAvailability(domain);
+//     console.log(`${domain} is ${isAvailable ? 'available' : 'not available'}`);
+// })();
 
 module.exports = {checkDomainAvailability};
