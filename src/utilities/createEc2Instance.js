@@ -16,7 +16,7 @@ const ec2Client = new EC2Client({ region: REGION });
 const userDataBase64 = Buffer.from(userDataScript).toString("base64");
 
 const instanceParams = {
-  ImageId: "ami-0f94bc8eba5db7759", // Amazon Linux AMI
+  ImageId: "ami-087f352c165340ea1", // Amazon Linux AMI
   InstanceType: "t2.micro",
   KeyName: "auth-aws",
   MinCount: 1,

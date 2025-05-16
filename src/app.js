@@ -8,9 +8,10 @@ const cookieParser = require("cookie-parser");
 
 // entities must to be with db.resync() function to create the table
 const { PORT } = require("./config/index.js");
-//const { db } =require("./database");
+const { db } =require("./database");
 //const associations = require('./models/associations.js');
 const { ErrorMiddleware } = require("./middlewares/errors.middlewares.js");
+const { authRouter } = require("./routes/website.routes.js");
 
 global.__basedir = __dirname;
 
@@ -18,7 +19,7 @@ class App {
   constructor() {
     this.app = express();
     this.port = PORT;
-    //this.connectToDatabase();
+    this.connectToDatabase();
     this.initializeMiddlewares();
     this.initializeRoutes();
     this.initializeErrorHandling();
@@ -32,16 +33,16 @@ class App {
     });
   }
 
-  // async connectToDatabase() {
-  //   try {
-  //         await db.authenticate();     // Test the database connection
-  //         console.log('Connection to the database has been established successfully.');
-  //         await db.sync({alter:true});             // Synchronize models with the database
-  //         console.log('Database synchronization complete.');
-  //   } catch (error) {
-  //         console.error('Unable to connect to the database:', error);
-  //   }
-  // }
+  async connectToDatabase() {
+    try {
+          await db.authenticate();     // Test the database connection
+          console.log('Connection to the database has been established successfully.');
+          await db.sync({alter:true});             // Synchronize models with the database
+          console.log('Database synchronization complete.');
+    } catch (error) {
+          console.error('Unable to connect to the database:', error);
+    }
+  }
 
   initializeMiddlewares() {
     this.app.use(morgan("dev"));
@@ -63,8 +64,7 @@ class App {
   }
 
   initializeRoutes() {
-    // this.app.use("", router);
-    // this.app.use("/upload",csvRouter);
+    this.app.use("", authRouter);
   }
 
   initializeErrorHandling() {
