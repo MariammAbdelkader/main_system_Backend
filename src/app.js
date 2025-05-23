@@ -12,6 +12,9 @@ const { db } =require("./database");
 //const associations = require('./models/associations.js');
 const { ErrorMiddleware } = require("./middlewares/errors.middlewares.js");
 const { authRouter } = require("./routes/website.routes.js");
+const { keycloak, memoryStore } = require("./config/keycloak.config.js");
+const session = require("express-session");
+
 
 global.__basedir = __dirname;
 
@@ -54,6 +57,19 @@ class App {
         credentials: true,
       })
     );
+
+    this.app.use(
+      session({
+        secret: "some secret",
+        resave: false,
+        saveUninitialized: true,
+        store: memoryStore,
+      })
+    );
+
+    this.app.use(keycloak.middleware());
+
+
 
     this.app.use((req, res, next) => {
       // next() should be provided in order to go to next middleware
