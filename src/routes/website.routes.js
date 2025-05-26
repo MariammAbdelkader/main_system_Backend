@@ -3,6 +3,7 @@ const { login, signup, confirm } = require("../controllers/auth.controller");
 
 const { YOUR_APP_CLIENT_ID, YOUR_USER_POOL_ID } = require("../config");
 const AmazonCognitoIdentity = require("amazon-cognito-identity-js");
+const { authMiddleware } = require("../middlewares/authentication.middlewares");
 
 
 // const fetch = require("node-fetch");
@@ -78,8 +79,10 @@ authRouter.post("/login", login)
 //       }
 
 //       res.status(401).json({ error: err.message });
-//     },
+//     
 //   });
 // });
-
+authRouter.get("/test",authMiddleware,(req,res)=>{
+    res.json("hello")
+})
 module.exports={authRouter}
