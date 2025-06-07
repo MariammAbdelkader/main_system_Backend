@@ -7,13 +7,14 @@ const cookieParser = require("cookie-parser");
 // const swaggerSpec = require('./config/swagger.js');
 
 // entities must to be with db.resync() function to create the table
-const { PORT } = require("./config/index.js");
+const { PORT, MONGO_URI } = require("./config/index.js");
 const { db } =require("./database");
 //const associations = require('./models/associations.js');
 const { ErrorMiddleware } = require("./middlewares/errors.middlewares.js");
 const { authRouter } = require("./routes/website.routes.js");
 const { keycloak, memoryStore } = require("./config/keycloak.config.js");
 const session = require("express-session");
+const   mongoose  = require("mongoose");
 
 
 global.__basedir = __dirname;
@@ -22,12 +23,16 @@ class App {
   constructor() {
     this.app = express();
     this.port = PORT;
-    this.connectToDatabase();
+    this.initializeApp();
+  }
+
+  async initializeApp() {
+   // await this.connectToMongoDatabase();
     this.initializeMiddlewares();
     this.initializeRoutes();
     this.initializeErrorHandling();
+    this.connectToPostgresDatabase();
   }
-
   listen() {
     this.app.listen(this.port, () => {
       console.log("=================================");
@@ -36,14 +41,30 @@ class App {
     });
   }
 
-  async connectToDatabase() {
+  // async connectToMongoDatabase() {
+  //   try {
+  //     await mongoose.connect(MONGO_URI, {
+  //       useNewUrlParser: true,
+  //       useUnifiedTopology: true,
+  //     });
+  //     await mongoose.connection.db.admin().ping();
+  //     console.log("✅ MongoDB connected and alive");
+  //   } catch (err) {
+  //     console.error("❌ MongoDB connection error:", err);
+  //     process.exit(1);
+  //   }
+  // }
+
+  async connectToPostgresDatabase() {
     try {
-          await db.authenticate();     // Test the database connection
-          console.log('Connection to the database has been established successfully.');
-          await db.sync({alter:true});             // Synchronize models with the database
-          console.log('Database synchronization complete.');
+      await db.authenticate(); // Test the database connection
+      console.log(
+        "Connection to the database has been established successfully."
+      );
+      await db.sync({ alter: true }); // Synchronize models with the database
+      console.log("Database synchronization complete.");
     } catch (error) {
-          console.error('Unable to connect to the database:', error);
+      console.error("Unable to connect to the database:", error);
     }
   }
 
@@ -68,8 +89,6 @@ class App {
     );
 
     this.app.use(keycloak.middleware());
-
-
 
     this.app.use((req, res, next) => {
       // next() should be provided in order to go to next middleware
