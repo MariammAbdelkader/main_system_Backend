@@ -26,6 +26,7 @@ class App {
     this.initializeApp();
   }
 
+
   async initializeApp() {
    // await this.connectToMongoDatabase();
     this.initializeMiddlewares();
@@ -33,6 +34,7 @@ class App {
     this.initializeErrorHandling();
     this.connectToPostgresDatabase();
   }
+
   listen() {
     this.app.listen(this.port, () => {
       console.log("=================================");
@@ -79,16 +81,7 @@ class App {
       })
     );
 
-    this.app.use(
-      session({
-        secret: "some secret",
-        resave: false,
-        saveUninitialized: true,
-        store: memoryStore,
-      })
-    );
 
-    this.app.use(keycloak.middleware());
 
     this.app.use((req, res, next) => {
       // next() should be provided in order to go to next middleware
