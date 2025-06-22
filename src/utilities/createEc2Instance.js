@@ -6,7 +6,7 @@ const {
   waitUntilInstanceStatusOk,
 } = require("@aws-sdk/client-ec2");
 const { userDataScript } = require("../scripts/userDataScript");
-
+const { v4: uuidv4 } = require("uuid");
 // to be moved to the environment variiables file
 const REGION = "us-west-2";
 
@@ -27,13 +27,18 @@ const instanceParams = {
     Arn: "arn:aws:iam::970547355263:instance-profile/ec2Role",
   },
   SecurityGroupIds: ["sg-04001e0f419cd5f77"],
- // UserData: userDataBase64, Attach User Data script
+  // UserData: userDataBase64, Attach User Data script
 };
 
 const createInstance = async () => {
   try {
     // Run the instance
-    const command = new RunInstancesCommand(instanceParams);
+    const token = uuidv4();
+    console.log("🔑 clientToken:", token);
+    const command = new RunInstancesCommand({
+      ...instanceParams, // ✅ Spread the original params
+      ClientToken: token, // ✅ Add fresh client token
+    });
     const data = await ec2Client.send(command);
     const instanceId = data.Instances[0].InstanceId;
     console.log("✅ EC2 Instance Created:", instanceId);
@@ -71,7 +76,7 @@ const createInstance = async () => {
     console.log("Error creating instance", err);
   }
 };
-console.log("Creating EC2 instance...");
+//console.log("Creating EC2 instance...");
 
 //createInstance();
 

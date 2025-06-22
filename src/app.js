@@ -76,7 +76,7 @@ class App {
     this.app.use(cookieParser());
     this.app.use(
       cors({
-        origin: "http://localhost:8000", //Port of FrontEnd
+        origin: "http://localhost:3001", //Port of FrontEnd
         credentials: true,
       })
     );
